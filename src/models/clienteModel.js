@@ -39,41 +39,54 @@ async function loginCliente(email, senha) {
 }
 
 async function createCliente(email, senha, nome, telefone) {
-    const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: senha,
-        options: {
-            data: {
-                nome: nome,
-                telefone: telefone
+    try {
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: senha,
+            options: {
+                data: {
+                    nome: nome,
+                    telefone: telefone
+                }
             }
+        });
+
+        if (error) throw error;
+
+        const userId = data.user?.id;
+        if (!userId) throw new Error("ID do usuário não encontrado após cadastro.");
+
+        // Check if user already exists in tb_clientes to avoid duplication crash
+        const { data: existingClient } = await supabase
+            .from('tb_clientes')
+            .select('id')
+            .eq('id_auth', userId)
+            .maybeSingle();
+
+        if (existingClient) {
+            throw new Error("Cliente já cadastrado para este usuário.");
         }
-    });
 
-    if (error) {
-        throw error;
+        const { error: dbError } = await supabase
+            .from('tb_clientes')
+            .insert([
+                {
+                    id_auth: userId,
+                    nome: nome,
+                    email: email,
+                    telefone: telefone
+                }
+            ])
+            .select()
+            .single();
+
+        if (dbError) throw dbError;
+
+        return data;
+    } catch (err) {
+        console.error("Error in createCliente model:", err);
+        throw err;
     }
-
-    const userId = data.user?.id;
-    if (!userId) throw new Error("ID do usuário não encontrado após cadastro.");
-
-    const { error: dbError } = await supabase
-        .from('tb_clientes')
-        .insert([
-            {
-                id_auth: userId,
-                nome: nome,
-                email: email,
-                telefone: telefone
-            }
-        ])
-        .select()
-        .single();
-
-    if (dbError) throw dbError;
-
-
-    return data;
 }
 
 export const clienteModel = {

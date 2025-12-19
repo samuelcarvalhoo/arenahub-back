@@ -6,7 +6,12 @@ async function getArena() {
 
 async function getArenaById(id) {
   if (!id) throw new Error("ID não fornecido");
-  return await arenaModel.getArenaById(id);
+
+  if (!isNaN(id)) {
+    return await arenaModel.getArenaById(id);
+  } else {
+    return await arenaModel.getArenaBySlug(id);
+  }
 }
 
 async function createArena(nome, telefone, endereco, slug) {

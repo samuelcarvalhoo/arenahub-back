@@ -27,6 +27,9 @@ async function getQuadraByArenaId(req, res) {
     const quadras = await quadraApplication.getQuadraByArenaId(slug);
     res.json(quadras);
   } catch (err) {
+    if (err.message.includes("Nenhuma quadra encontrada")) {
+      return res.status(404).json({ error: "Nenhuma quadra encontrada para esta arena" });
+    }
     console.error("Erro ao buscar quadras:", err);
     res.status(500).json({ error: err.message });
   }

@@ -44,7 +44,7 @@ async function createArena(nome, telefone, endereco, slug) {
 async function getArenaBySlug(slug) {
   const { data, error } = await supabase
     .from("tb_arena")
-    .select("id")
+    .select("*")
     .eq("slug", slug)
     .single();
 

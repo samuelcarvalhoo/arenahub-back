@@ -22,7 +22,9 @@ async function getQuadraByArenaId(identifier) {
         quadra = await quadraModel.getQuadraByArenaId(identifier);
     }
 
-    if (quadra.length == 0) throw new Error("Nenhuma quadra encontrada para a arena fornecida");
+    if (quadra.length == 0) {
+        return [];
+    }
     return quadra;
 }
 

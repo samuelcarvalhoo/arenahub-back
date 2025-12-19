@@ -16,6 +16,11 @@ app.use("/", horario);
 app.use("/", agendamento);
 app.use("/", cliente);
 
+app.use((err, req, res, next) => {
+  console.error("Unhandled Error:", err);
+  res.status(500).json({ error: "Internal Server Error" });
+});
+
 
 app.listen(3002, () => {
   console.log("Servidor rodando na porta 3002");
