@@ -10,11 +10,18 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get('/ping', (req, res) => {
+  console.log('Ping recebido! Mantendo a API acordada.'); 
+  
+  res.status(200).send('pong');
+});
+
 app.use("/", arena);
 app.use("/", quadra);
 app.use("/", horario);
 app.use("/", agendamento);
 app.use("/", cliente);
+
 
 app.use((err, req, res, next) => {
   console.error("Unhandled Error:", err);
