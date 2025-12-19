@@ -1,7 +1,18 @@
 import { supabase } from "../config/supabaseClient.js";
+import { createClient } from "@supabase/supabase-js";
 
 async function loginCliente(email, senha) {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const tempSupabase = createClient(
+        process.env.SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY,
+        {
+            auth: {
+                persistSession: false
+            }
+        }
+    );
+
+    const { data, error } = await tempSupabase.auth.signInWithPassword({
         email: email,
         password: senha,
     });
@@ -9,7 +20,22 @@ async function loginCliente(email, senha) {
     if (error) {
         throw error;
     }
-    return data;
+
+    const { data: clienteData, error: clienteError } = await supabase
+        .from('tb_clientes')
+        .select('id, nome')
+        .eq('id_auth', data.user.id)
+        .maybeSingle();
+
+    console.log("Login - User Auth ID:", data.user.id);
+    console.log("Login - Cliente Data Fetched:", clienteData);
+    console.log("Login - Cliente Error Fetched:", clienteError);
+
+    if (clienteError) {
+        console.error("Erro ao buscar dados do cliente:", clienteError);
+    }
+
+    return { ...data, cliente: clienteData };
 }
 
 async function createCliente(email, senha, nome, telefone) {
@@ -34,13 +60,15 @@ async function createCliente(email, senha, nome, telefone) {
     const { error: dbError } = await supabase
         .from('tb_clientes')
         .insert([
-            { 
+            {
                 id_auth: userId,
-                nome: nome, 
-                email: email ,
+                nome: nome,
+                email: email,
                 telefone: telefone
             }
-        ]);
+        ])
+        .select()
+        .single();
 
     if (dbError) throw dbError;
 

@@ -86,10 +86,23 @@ async function deleteQuadra(id) {
   return data;
 }
 
+async function getQuadraByArenaNumericId(id) {
+  const { data, error } = await supabase
+    .from("tb_quadra")
+    .select("*")
+    .eq("id_arena", id);
+
+  if (error) {
+    throw error;
+  }
+  return data;
+}
+
 export const quadraModel = {
   getQuadra,
   getQuadraById,
   getQuadraByArenaId,
+  getQuadraByArenaNumericId,
   createQuadra,
   updateQuadra,
   deleteQuadra

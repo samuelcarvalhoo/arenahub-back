@@ -11,9 +11,17 @@ async function getQuadraById(id) {
     return quadra;
 }
 
-async function getQuadraByArenaId(slug) {
-    if (!slug) throw new Error("Slug não fornecido");
-    const quadra = await quadraModel.getQuadraByArenaId(slug);
+async function getQuadraByArenaId(identifier) {
+    if (!identifier) throw new Error("Identificador (ID ou Slug) não fornecido");
+
+    let quadra;
+
+    if (!isNaN(identifier)) {
+        quadra = await quadraModel.getQuadraByArenaNumericId(identifier);
+    } else {
+        quadra = await quadraModel.getQuadraByArenaId(identifier);
+    }
+
     if (quadra.length == 0) throw new Error("Nenhuma quadra encontrada para a arena fornecida");
     return quadra;
 }

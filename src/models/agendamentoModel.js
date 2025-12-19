@@ -11,7 +11,7 @@ async function getAgendamento() {
   return data;
 }
 
-async function getAgendamentoByQuadraAndDate(id_quadra , date) {
+async function getAgendamentoByQuadraAndDate(id_quadra, date) {
   const { data, error } = await supabase
     .from("tb_agendamentos")
     .select("inicio, fim, status")
@@ -25,7 +25,7 @@ async function getAgendamentoByQuadraAndDate(id_quadra , date) {
   return data;
 }
 
-async function createAgendamento(id_quadra, id_cliente, dia, inicio, fim, valor_total){
+async function createAgendamento(id_quadra, id_cliente, dia, inicio, fim, valor_total) {
   console.log("INSERT PARAMS:", {
     id_quadra,
     id_cliente,
@@ -61,14 +61,15 @@ async function findConflitos(id_quadra, dia, inicio, fim) {
     .eq("id_quadra", id_quadra)
     .eq("dia", dia)
     .lt("inicio", fim)
-    .gt("fim", inicio);
+    .gt("fim", inicio)
+    .neq("status", 'cancelado'); 
 
   if (error) throw error;
 
   return data;
 }
 
-async function getAgendamentoConcluido(id){
+async function getAgendamentoConcluido(id) {
   const { data, error } = await supabase
     .from("tb_agendamentos")
     .select("*")
@@ -93,9 +94,9 @@ async function deleteAgendamento(id) {
 
 async function getByUser(id) {
   const { data, error } = await supabase
-  .from("tb_agendamentos")
-  .select("*")
-  .eq("id_cliente", id);
+    .from("tb_agendamentos")
+    .select("*")
+    .eq("id_cliente", id);
 
   if (error) throw error;
   return data;
