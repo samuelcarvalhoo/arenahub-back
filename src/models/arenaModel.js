@@ -15,8 +15,7 @@ async function getArenaById(id) {
   const { data, error } = await supabase
     .from("tb_arena")
     .select("*")
-    .eq("id", id)
-    .single();
+    .eq("id", id);
 
   if (error) {
     throw error;
@@ -45,8 +44,7 @@ async function getArenaBySlug(slug) {
   const { data, error } = await supabase
     .from("tb_arena")
     .select("*")
-    .eq("slug", slug)
-    .single();
+    .eq("slug", slug);
 
   if (error) {
     throw error;
