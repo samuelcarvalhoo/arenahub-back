@@ -23,12 +23,9 @@ async function loginCliente(email, senha) {
 
     const { data: clienteData, error: clienteError } = await supabase
         .from('tb_clientes')
-        .select('id, nome')
-        .eq('id_auth', data.user.id);
-
-    console.log("Login - User Auth ID:", data.user.id);
-    console.log("Login - Cliente Data Fetched:", clienteData);
-    console.log("Login - Cliente Error Fetched:", clienteError);
+        .select('*')
+        .eq('id_auth', data.user.id)
+        .single();
 
     if (clienteError) {
         console.error("Erro ao buscar dados do cliente:", clienteError);
@@ -61,11 +58,11 @@ async function createCliente(email, senha, nome, telefone) {
             .select('id')
             .eq('id_auth', userId);
 
-        if (existingClient) {
+        if (existingClient && existingClient.length > 0) {
             throw new Error("Cliente já cadastrado para este usuário.");
         }
 
-        const { error: dbError } = await supabase
+        const { data: newClientData, error: dbError } = await supabase
             .from('tb_clientes')
             .insert([
                 {
@@ -75,11 +72,12 @@ async function createCliente(email, senha, nome, telefone) {
                     telefone: telefone
                 }
             ])
-            .select();
+            .select()
+            .single();
 
         if (dbError) throw dbError;
 
-        return data;
+        return { ...data, cliente: newClientData };
     } catch (err) {
         console.error("Error in createCliente model:", err);
         throw err;
