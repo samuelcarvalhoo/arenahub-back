@@ -15,8 +15,7 @@ async function getQuadraById(id) {
   const { data, error } = await supabase
     .from("tb_quadra")
     .select("*")
-    .eq("id_quadra", id)
-    .maybeSingle();
+    .eq("id_quadra", id);
 
   if (error) {
     throw error;
@@ -45,8 +44,7 @@ async function createQuadra(nome, descricao, valor_hora, id_arena) {
       valor_hora: valor_hora,
       id_arena: id_arena
     })
-    .select()
-    .single();
+    .select();
 
   if (error) {
     throw error;
@@ -64,8 +62,7 @@ async function updateQuadra(id, nome, descricao, valor_hora, id_arena) {
       id_arena: id_arena
     })
     .eq("id_quadra", id)
-    .select()
-    .single();
+    .select();
 
   if (error) {
     throw error;

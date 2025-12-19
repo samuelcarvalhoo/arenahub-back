@@ -24,8 +24,7 @@ async function loginCliente(email, senha) {
     const { data: clienteData, error: clienteError } = await supabase
         .from('tb_clientes')
         .select('id, nome')
-        .eq('id_auth', data.user.id)
-        .maybeSingle();
+        .eq('id_auth', data.user.id);
 
     console.log("Login - User Auth ID:", data.user.id);
     console.log("Login - Cliente Data Fetched:", clienteData);
@@ -60,8 +59,7 @@ async function createCliente(email, senha, nome, telefone) {
         const { data: existingClient } = await supabase
             .from('tb_clientes')
             .select('id')
-            .eq('id_auth', userId)
-            .maybeSingle();
+            .eq('id_auth', userId);
 
         if (existingClient) {
             throw new Error("Cliente já cadastrado para este usuário.");
@@ -77,8 +75,7 @@ async function createCliente(email, senha, nome, telefone) {
                     telefone: telefone
                 }
             ])
-            .select()
-            .single();
+            .select();
 
         if (dbError) throw dbError;
 
